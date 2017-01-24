@@ -1,0 +1,87 @@
+{***************************************
+
+ Written by: David J. Lin, January 29, 2008
+
+ Description: Fractal Resistance and Support
+
+****************************************}
+
+Vars: x(0),new(0),shift(0),TakenUpFract(0),TakenDnFract(0);
+Arrays: LastUpFract[3](0),LastDnFract[3](0);
+Arrays: R[5000,3](0), S[5000,3](0); {Date,Time,Price array of fractal R/S}
+Arrays: LR[5000](0), LS[5000](0); {trendline value of fractal R/S}
+Vars: NR(0),NS(0); {number of present fractal R/S}
+
+Condition1 = high[3] > high[4]; 
+Condition2 = high[3] > high[5]; 
+Condition3 = high[3] > high[1]; 
+Condition4 = high[3] > high[2]; 
+
+if Condition1 and Condition2 and Condition3 and Condition4 then
+begin
+	LastUpFract[0]=D[3];
+	LastUpFract[1]=T[3];
+ LastUpFract[2]=high[3];
+	TakenUpFract=0;
+end;	
+
+Condition1 = low[3] < low[4]; 
+Condition2 = low[3] < low[5]; 
+Condition3 = low[3] < low[1]; 
+Condition4 = low[3] < low[2]; 
+
+if Condition1 and Condition2 and Condition3 and Condition4 then 
+begin
+	LastDnFract[0]=D[3];
+	LastDnFract[1]=T[3];
+ LastDnFract[2]=low[3];
+	TakenDnFract=0;
+end;
+
+shift=NR; {remove old lines first, before adding new ones}
+for x=shift downto 1
+begin
+	if(low[1]<=R[x,2]) then 
+ begin
+ 	TL_Delete(LR[x]);
+  new=TL_New(R[x,0],R[x,1],R[x,2],D[1],T[1],R[x,2]);
+  TL_SetColor(new,Magenta);
+ 	NR=NR-1;
+ end;
+end;
+
+if(close[1]>LastUpFract[2] and open[1]>LastUpFract[2] and TakenUpFract<>LastUpFract[2]) then 
+begin	
+ NR=NR+1;
+	R[NR,0]=LastUpFract[0];
+	R[NR,1]=LastUpFract[1];
+	R[NR,2]=LastUpFract[2];
+ LR[NR]=TL_New(R[NR,0],R[NR,1],R[NR,2],D[1],T[1],R[NR,2]);
+	TL_SetExtRight(LR[NR],true);
+	TL_SetColor(LR[NR],Magenta);
+	TakenUpFract=LastUpFract[2];
+end;
+
+shift=NS;
+for x=shift downto 1
+begin
+	if(high[1]>=S[x,2]) then 
+	begin
+		TL_Delete(LS[x]);
+  new=TL_New(S[x,0],S[x,1],S[x,2],D[1],T[1],S[x,2]);
+ 	TL_SetColor(new,Green);
+		NS=NS-1;
+	end;
+end;
+
+if(close[1]<LastDnFract[2] and open[1]<LastDnFract[2] and TakenDnFract<>LastDnFract[2]) then 
+begin	
+ NS=NS+1;
+	S[NS,0]=LastDnFract[0];
+	S[NS,1]=LastDnFract[1];
+	S[NS,2]=LastDnFract[2];
+ LS[NS]=TL_New(S[NS,0],S[NS,1],S[NS,2],D[1],T[1],S[NS,2]);
+	TL_SetExtRight(LS[NS],true);
+	TL_SetColor(LS[NS],Green);
+	TakenDnFract=LastDnFract[2];
+end

@@ -1,0 +1,542 @@
+{***************************************
+ Written by: David J. Lin, February 1, 2008
+
+ Description: Fractal Resistance and Support Long Entry
+	Trigger #1
+****************************************}
+Inputs: Trigger1Retrace(0.5),window(10),pipTP(100),pipSL(1500);
+Vars: x(0), TriggerLong(0),BarNumTrigger(0);
+Arrays: LastUpFract[3](0);
+Arrays: PriorDnFract[2](0); {for filter}
+Vars: BarNumPriorDnFract(0);{for filter}
+
+Condition1 = high[3] > high[4]; 
+Condition2 = high[3] > high[5]; 
+Condition3 = high[3] > high[1]; 
+Condition4 = high[3] > high[2]; 
+
+if Condition1 and Condition2 and Condition3 and Condition4 then
+begin
+	LastUpFract[0]=D[3];
+	LastUpFract[1]=T[3];
+ LastUpFract[2]=high[3];
+end;	
+
+Condition1 = low[3] < low[4]; 
+Condition2 = low[3] < low[5]; 
+Condition3 = low[3] < low[1]; 
+Condition4 = low[3] < low[2]; 
+
+if Condition1 and Condition2 and Condition3 and Condition4 then {for filter}
+begin
+	PriorDnFract[1]=PriorDnFract[0];	
+ PriorDnFract[0]=low[3];
+ BarNumPriorDnFract=BarNumber[3]; 
+end;
+
+if(high[1]>LastUpFract[2]) then
+begin
+	BarNumTrigger=BarNumber[1];
+ value1=high[1]-(Trigger1Retrace*(high[1]-low[1]));
+	if(value1<LastUpFract[2]) then 
+		begin
+		 TriggerLong=value1;
+  end
+	else
+		begin
+		 TriggerLong=0;
+  end;
+end;
+
+if(low<=TriggerLong) then {Trigger #1}
+begin
+
+ {begin filters}
+	Condition1=(BarNumber-BarNumTrigger) <= window;
+ Condition2=PriorDnFract[0]>PriorDnFract[1];
+ Condition3=true;
+{	if BarNumPriorDnFract<>0 then 
+	begin
+	 for x=0 to (BarNumber - BarNumPriorDnFract) 
+	 begin
+	  if(low[x]<PriorDnFract[0]) then Condition2=false;
+	 end;
+ end;
+}
+	{end filters}
+		
+ if(Condition1 and Condition2 and Condition3) then 
+	begin
+	 buy ("FractRS L1") next bar at market;
+	 SetStopContract;
+	 value1=pipSL point * BigPointValue;
+	 SetStopLoss(value1);
+  value1=pipTP point * BigPointValue;
+	 SetProfitTarget(value1);
+
+ 	TriggerLong=0; {reset holder}
+	end;
+end;
+
+
+{***************************************
+ Written by: David J. Lin, February 1, 2008
+
+ Description: Fractal Resistance and Support Short Entry
+ Triger #1
+****************************************}
+Inputs: Trigger1Retrace(0.5),window(10),pipTP(600),pipSL(1500);
+Vars: x(0),TriggerShort(999999),BarNumTrigger(0);
+Arrays: LastDnFract[3](0);
+Arrays: PriorUpFract[2](0); {for filter}
+Vars: BarNumPriorUpFract(0);{for filter}
+
+Condition1 = low[3] < low[4]; 
+Condition2 = low[3] < low[5]; 
+Condition3 = low[3] < low[1]; 
+Condition4 = low[3] < low[2]; 
+
+if Condition1 and Condition2 and Condition3 and Condition4 then 
+begin
+	LastDnFract[0]=D[3];
+	LastDnFract[1]=T[3];
+ LastDnFract[2]=low[3];
+end;
+
+Condition1 = high[3] > high[4]; 
+Condition2 = high[3] > high[5]; 
+Condition3 = high[3] > high[1]; 
+Condition4 = high[3] > high[2]; 
+
+if Condition1 and Condition2 and Condition3 and Condition4 then {for filter}
+begin
+	PriorUpFract[1]=PriorUpFract[0];	
+ PriorUpFract[0]=high[3];
+ BarNumPriorUpFract=BarNumber[3]; 
+end;
+
+if(low[1]<LastDnFract[2]) then
+begin
+	BarNumTrigger=BarNumber[1];	
+ value1=low[1]+(Trigger1Retrace*(high[1]-low[1]));
+	if(value1>LastDnFract[2]) then 
+		begin
+		 TriggerShort=value1;
+  end
+	else
+		begin
+		 TriggerShort=999999;
+  end;
+end;
+
+if(high>=TriggerShort) then {Trigger #1}
+begin 
+	
+ {begin filters}
+	Condition1=(BarNumber-BarNumTrigger) <= window;
+ Condition2=PriorUpFract[0]<PriorUpFract[1];
+ Condition3=true;
+{	if BarNumPriorUpFract<>0 then 
+	begin
+	 for x=0 to (BarNumber - BarNumPriorUpFract) 
+	 begin
+	  if(high[x]>PriorUpFract[0]) then Condition2=false;
+	 end;
+	end;
+}
+	{end filters}
+
+ if(Condition1 and Condition2 and Condition3) then 
+	begin
+		sell ("FractRS S2") next bar at market;
+	 SetStopContract;
+	 value1=pipSL point * BigPointValue;
+	 SetStopLoss(value1);
+  value1=pipTP point * BigPointValue;
+	 SetProfitTarget(value1);
+
+ 	TriggerShort=999999; {reset holder}
+ end;
+end;
+
+{***************************************
+ Written by: David J. Lin, February 1, 2008
+
+ Description: Fractal Resistance and Support Long Entry
+	Trigger #2
+****************************************}
+Inputs: pipTP(100),pipSL(1500);
+Vars: x(0),shift(0),TakenUpFract(0);
+Arrays: LastUpFract[3](0);
+Arrays: PriorDnFract[2](0); {for filter}
+Vars: BarNumPriorDnFract(0);{for filter}
+Arrays: R[5000,3](0); {Date,Time,Price array of fractal R/S}
+Vars: NR(0); {number of present fractal R/S}
+
+Condition1 = high[3] > high[4]; 
+Condition2 = high[3] > high[5]; 
+Condition3 = high[3] > high[1]; 
+Condition4 = high[3] > high[2]; 
+
+if Condition1 and Condition2 and Condition3 and Condition4 then
+begin
+	LastUpFract[0]=D[3];
+	LastUpFract[1]=T[3];
+ LastUpFract[2]=high[3];
+	TakenUpFract=0;
+end;	
+
+Condition1 = low[3] < low[4]; 
+Condition2 = low[3] < low[5]; 
+Condition3 = low[3] < low[1]; 
+Condition4 = low[3] < low[2]; 
+
+if Condition1 and Condition2 and Condition3 and Condition4 then {for filter}
+begin
+	PriorDnFract[1]=PriorDnFract[0];	
+ PriorDnFract[0]=low[3];
+ BarNumPriorDnFract=BarNumber[3]; 
+end;
+
+if(low<=R[NR,2]) then {Trigger #2}
+begin
+
+ {begin filters}
+ Condition1=PriorDnFract[0]>PriorDnFract[1];
+ Condition2=true;
+{	if BarNumPriorDnFract<>0 then 
+	begin
+	 for x=0 to (BarNumber - BarNumPriorDnFract) 
+	 begin
+	  if(low[x]<PriorDnFract[0]) then Condition2=false;
+	 end;
+ end;
+}
+	{end filters}
+		
+ if(Condition1 and Condition2) then 
+	begin
+		buy ("FractRS L2") next bar at market;
+	 SetStopContract;
+	 value1=pipSL point * BigPointValue;
+	 SetStopLoss(value1);
+  value1=pipTP point * BigPointValue;
+	 SetProfitTarget(value1);
+ end;
+end;
+
+shift=NR; {remove old lines first, before adding new ones}
+for x=shift downto 1
+begin
+	if(low[1]<=R[x,2]) then NR=NR-1;
+end;
+
+if(close[1]>LastUpFract[2] and open[1]>LastUpFract[2] and TakenUpFract<>LastUpFract[2]) then 
+begin	
+ NR=NR+1;
+	R[NR,0]=LastUpFract[0];
+	R[NR,1]=LastUpFract[1];
+	R[NR,2]=LastUpFract[2];
+	TakenUpFract=LastUpFract[2];
+end;
+
+{***************************************
+ Written by: David J. Lin, February 1, 2008
+
+ Description: Fractal Resistance and Support Short Entry
+ Triger #2
+****************************************}
+Inputs: pipTP(500),pipSL(1500);
+Vars: x(0),shift(0),TakenDnFract(0);
+Arrays: LastDnFract[3](0);
+Arrays: PriorUpFract[2](0); {for filter}
+Vars: BarNumPriorUpFract(0);{for filter}
+Arrays: S[5000,3](0); {Date,Time,Price array of fractal R/S}
+Vars: NS(0); {number of present fractal R/S}
+
+Condition1 = low[3] < low[4]; 
+Condition2 = low[3] < low[5]; 
+Condition3 = low[3] < low[1]; 
+Condition4 = low[3] < low[2]; 
+
+if Condition1 and Condition2 and Condition3 and Condition4 then 
+begin
+	LastDnFract[0]=D[3];
+	LastDnFract[1]=T[3];
+ LastDnFract[2]=low[3];
+	TakenDnFract=0;
+end;
+
+Condition1 = high[3] > high[4]; 
+Condition2 = high[3] > high[5]; 
+Condition3 = high[3] > high[1]; 
+Condition4 = high[3] > high[2]; 
+
+if Condition1 and Condition2 and Condition3 and Condition4 then {for filter}
+begin
+	PriorUpFract[1]=PriorUpFract[0];	
+ PriorUpFract[0]=high[3];
+ BarNumPriorUpFract=BarNumber[3]; 
+end;
+
+if(high>=S[NS,2]) then {Trigger #2}
+begin 
+	
+ {begin filters}
+ Condition1=PriorUpFract[0]<PriorUpFract[1];
+ Condition2=true;
+{	if BarNumPriorUpFract<>0 then 
+	begin
+	 for x=0 to (BarNumber - BarNumPriorUpFract) 
+	 begin
+	  if(high[x]>PriorUpFract[0]) then Condition2=false;
+	 end;
+	end;
+}
+	{end filters}
+
+ if(Condition1 and Condition2) then 
+	begin
+		sell ("FractRS S2") next bar at market;
+	 SetStopContract;
+	 value1=pipSL point * BigPointValue;
+	 SetStopLoss(value1);
+  value1=pipTP point * BigPointValue;
+	 SetProfitTarget(value1);
+ end;
+end;
+
+shift=NS; {remove old lines first, before adding new ones}
+for x=shift downto 1
+begin
+	if(high[1]>=S[x,2]) then NS=NS-1;
+end;
+
+if(close[1]<LastDnFract[2] and open[1]<LastDnFract[2] and TakenDnFract<>LastDnFract[2]) then 
+begin	
+ NS=NS+1;
+	S[NS,0]=LastDnFract[0];
+	S[NS,1]=LastDnFract[1];
+	S[NS,2]=LastDnFract[2];
+	TakenDnFract=LastDnFract[2];
+end;
+
+{***************************************
+ Written by: David J. Lin, February 1, 2008
+
+ Description: Fractal Resistance and Support Long Entry
+	Trigger #3
+****************************************}
+Inputs: Trigger3Retrace(0.618),window(10),pipTP(700),pipSL(100);
+Vars: x(0),shift(0),TriggerLong(0),BarNumTrigger(0),TakenUpFract(0),TakenTrigger3(0);
+Arrays: LastUpFract[3](0);
+Arrays: PriorDnFract[2](0); {for filter}
+Vars: BarNumPriorDnFract(0);{for filter}
+Arrays: R[5000,3](0); {Date,Time,Price array of fractal R/S}
+Vars: NR(0); {number of present fractal R/S}
+
+Condition1 = high[3] > high[4]; 
+Condition2 = high[3] > high[5]; 
+Condition3 = high[3] > high[1]; 
+Condition4 = high[3] > high[2]; 
+
+if Condition1 and Condition2 and Condition3 and Condition4 then
+begin
+	LastUpFract[0]=D[3];
+	LastUpFract[1]=T[3];
+ LastUpFract[2]=high[3];
+end;	
+
+Condition1 = low[3] < low[4]; 
+Condition2 = low[3] < low[5]; 
+Condition3 = low[3] < low[1]; 
+Condition4 = low[3] < low[2]; 
+
+if Condition1 and Condition2 and Condition3 and Condition4 then {for filter}
+begin
+	PriorDnFract[1]=PriorDnFract[0];	
+ PriorDnFract[0]=low[3];
+ BarNumPriorDnFract=BarNumber[3]; 
+end;
+
+if(low<=R[NR,2] and TakenTrigger3=1) then {Trigger #2's condition}
+begin
+ TriggerLong=R[NR,2]-(Trigger3Retrace*(LastUpFract[2]-PriorDnFract[0]));
+ TakenTrigger3=0; {recalculate only once per new Fractal RS line}
+end;
+
+if(low<=TriggerLong) then {Trigger #3}
+begin
+
+ {begin filters}
+	Condition1=(BarNumber-BarNumTrigger) <= window;
+ Condition2=PriorDnFract[0]>PriorDnFract[1];
+ Condition3=true;
+{	if BarNumPriorDnFract<>0 then 
+	begin
+	 for x=0 to (BarNumber - BarNumPriorDnFract) 
+	 begin
+	  if(low[x]<PriorDnFract[0]) then Condition2=false;
+	 end;
+ end;
+}
+	{end filters}
+		
+ if(Condition1 and Condition2 and Condition3) then 
+	begin
+	 buy ("FractRS L3") next bar at market;
+	 SetStopContract;
+	 value1=pipSL point * BigPointValue;
+	 SetStopLoss(value1);
+  value1=pipTP point * BigPointValue;
+	 SetProfitTarget(value1);
+
+ 	TriggerLong=0; {reset holder}
+	end;
+end;
+
+shift=NR; {remove old lines first, before adding new ones}
+for x=shift downto 1
+begin
+	if(low[1]<=R[x,2]) then NR=NR-1;
+end;
+
+if(close[1]>LastUpFract[2] and open[1]>LastUpFract[2] and TakenUpFract<>LastUpFract[2]) then 
+begin	
+ NR=NR+1;
+	R[NR,0]=LastUpFract[0];
+	R[NR,1]=LastUpFract[1];
+	R[NR,2]=LastUpFract[2];
+	TakenUpFract=LastUpFract[2];
+	TakenTrigger3=1;
+	BarNumTrigger=BarNumber[1];
+end;
+
+{***************************************
+ Written by: David J. Lin, February 1, 2008
+
+ Description: Fractal Resistance and Support Short Entry
+ Triger #3
+****************************************}
+Inputs: Trigger3Retrace(0.618),window(10),pipTP(100),pipSL(300);
+Vars: x(0),shift(0),TriggerShort(999999),BarNumTrigger(0),TakenDnFract(0),TakenTrigger3(0);
+Arrays: LastDnFract[3](0);
+Arrays: PriorUpFract[2](0); {for filter}
+Vars: BarNumPriorUpFract(0);{for filter}
+Arrays: S[5000,3](0); {Date,Time,Price array of fractal R/S}
+Vars: NS(0); {number of present fractal R/S}
+
+Condition1 = low[3] < low[4]; 
+Condition2 = low[3] < low[5]; 
+Condition3 = low[3] < low[1]; 
+Condition4 = low[3] < low[2]; 
+
+if Condition1 and Condition2 and Condition3 and Condition4 then 
+begin
+	LastDnFract[0]=D[3];
+	LastDnFract[1]=T[3];
+ LastDnFract[2]=low[3];
+end;
+
+Condition1 = high[3] > high[4]; 
+Condition2 = high[3] > high[5]; 
+Condition3 = high[3] > high[1]; 
+Condition4 = high[3] > high[2]; 
+
+if Condition1 and Condition2 and Condition3 and Condition4 then {for filter}
+begin
+	PriorUpFract[1]=PriorUpFract[0];	
+ PriorUpFract[0]=high[3];
+ BarNumPriorUpFract=BarNumber[3]; 
+end;
+
+if(high>=S[NS,2] and TakenTrigger3=1) then {Trigger #2's condition}
+begin 
+ TriggerShort=S[NS,2]+(Trigger3Retrace*(PriorUpFract[0]-LastDnFract[2]));
+ TakenTrigger3=0; {recalculate only once per new Fractal RS line} 
+end;
+
+if(high>=TriggerShort) then {Trigger #3}
+begin 
+	
+ {begin filters}
+	Condition1=(BarNumber-BarNumTrigger) <= window;
+ Condition2=PriorUpFract[0]<PriorUpFract[1];
+ Condition3=true;
+{	if BarNumPriorUpFract<>0 then 
+	begin
+	 for x=0 to (BarNumber - BarNumPriorUpFract) 
+	 begin
+	  if(high[x]>PriorUpFract[0]) then Condition2=false;
+	 end;
+	end;
+}
+	{end filters}
+
+ if(Condition1 and Condition2 and Condition3) then 
+	begin
+		sell ("FractRS S3") next bar at market;
+	 SetStopContract;
+	 value1=pipSL point * BigPointValue;
+	 SetStopLoss(value1);
+  value1=pipTP point * BigPointValue;
+	 SetProfitTarget(value1);
+
+ 	TriggerShort=999999; {reset holder}
+ end;
+end;
+shift=NS; {remove old lines first, before adding new ones}
+for x=shift downto 1
+begin
+	if(high[1]>=S[x,2]) then NS=NS-1;
+end;
+
+if(close[1]<LastDnFract[2] and open[1]<LastDnFract[2] and TakenDnFract<>LastDnFract[2]) then 
+begin	
+ NS=NS+1;
+	S[NS,0]=LastDnFract[0];
+	S[NS,1]=LastDnFract[1];
+	S[NS,2]=LastDnFract[2];
+	TakenDnFract=LastDnFract[2];
+	TakenTrigger3=1;
+	BarNumTrigger=BarNumber[1];	
+end;
+
+{***************************************
+ Written by: David J. Lin, February 1, 2008
+
+ Description: Fractal Resistance and Support Short Order Management
+ 
+****************************************}
+
+Inputs: pipTP(100),pipSL(1000);
+Variables: OrderPrice(0);
+
+If MarketPosition = -1 Then Begin
+	OrderPrice = EntryPrice - (pipTP point);
+	ExitShort ("FractalRS S2 TP") Next Bar at OrderPrice Limit;
+
+	OrderPrice = EntryPrice + (pipSL point);
+	ExitShort ("FractalRS S2 SL") Next Bar at OrderPrice Stop;
+
+End;
+
+{***************************************
+ Written by: David J. Lin, February 1, 2008
+
+ Description: Fractal Resistance and Support Long Order Management
+ 
+****************************************}
+
+Inputs: pipTP(100),pipSL(1000);
+Variables: OrderPrice(0);
+
+If MarketPosition = 1 Then Begin
+	OrderPrice = EntryPrice + (pipTP point);
+	ExitLong ("FractalRS L2 TP") Next Bar at OrderPrice Limit;
+
+	OrderPrice = EntryPrice - (pipSL point);
+	ExitLong ("FractalRS L2 SL") Next Bar at OrderPrice Stop;
+
+End;
+
