@@ -1,0 +1,5 @@
+This set of indicators do work.
+
+However, I came upon a small problem. Because the stoch indicator (Stochastic Channel Index.mq4, the one that draws the stoch channels) is separate from the index indicator (Index - Euro 2.mq4) the one that draws the index bars), when both are displayed in the secondary window of the chart, they will auto-scale separately, such that the values from each chart do not line up exactly.  Even though the alignment is fairly close, it would require fixing the chart min/max of each one for them to align exactly.
+
+I will combine the functionality into a single indicator as the solution in the "new 2" version.
