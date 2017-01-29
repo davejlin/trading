@@ -1,0 +1,17 @@
+This version of the indicator merges the index drawing and stochastic channels with MAs into one indicator which is applied to the chart.
+
+Copy to /experts/indicators/ folder of your MT4 platform.
+
+Apply the indicator "Stochastic Channel Index - Euro" (etc.) to the chart.  You only need to apply one indicator per index to see both the index bars and stochastic channel lines & MAs.
+
+The other indicators "Stochastic Channel Index Method ..." also need to be present in the /experts/indicators/ folder, but they do **not** need to be applied to the chart.
+
+Do **not** change the names of the Method indicators, because their names are referenced exactly in the custom indicators.
+
+Also, do **not** change the parameter Identifier = "Euro"; (etc), because this is used to reference the Method indicator names exactly as they are spelled.
+
+To change the list of pairs in each index, you can edit the "Method - DATA" files.  Be sure to adjust the parameter "numPairs=7;" to  be equal to the number of pairs in the list.  You can use any number up to the total number.  If you use a smaller number than the total, only those first ones up to the desired number will be used in the calculation.  For example, if there are 7 pairs in the list, but you use "numPairs=6", then only the first 6 will be used.  (6 is what the original indicators used, regardless of how many total pairs were listed.)  As default, I specified the total number of pairs for each list, so:
+
+Risk = 8
+Canadense = 6
+All other indexes = 7
