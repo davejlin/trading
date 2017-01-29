@@ -1,0 +1,60 @@
+Sergio,
+
+This version of the indicator merges the index drawing and stochastic channels with MAs into one indicator which is applied to the chart.
+
+Installation Instructions:
+=================
+1.  Before turning on your MT4 platform (so, MT4 platform is completely closed) ...
+
+2.  Copy all indicators and directories in this folder into /experts/indicators/ folder of your MT4 platform.
+
+(Copy the whole Utilities SCI sub-folder into the /experts/indicators/ folder, because the path-names used include the sub-folder.  So, after copying, you will have a /experts/indicators/Utilities SCI/ folder.)
+
+3.  After copying all files/folder, turn on your MT4 platform.  After the MT4 platform opens, check that the new .mq4 files had been automatically compiled by making sure a corresponding .ex4 file exists for every .mq4 file.  (If not, manually compile the .mq4 file with the MetaEditor.)
+
+(The .mqh files in the sub-folder Utilities - SCI will NOT be compiled, and only .mqh files will always exist in that sub-folder.  While you shouldn't need to edit any files in the Utilities SCI sub-directory, you can inspect the .mqh files contents with any text editor.)
+
+4.  Apply the indicator "SCI - Euro" (etc.) to the chart.  You only need to apply one indicator per index to see both the index bars and stochastic channel lines & MAs.
+
+The other indicators "Utilities SCI ... (etc) ..." also need to be present in the /experts/indicators/ folder, but they do **not** need to be applied to the chart.
+
+Note regarding file and parameter names:
+==============================
+
+Note that the parameter Identifier = "Euro"; in "SCI - Euro" is used to reference the "Utilities SCI Data Euro" indicator exactly as they are spelled, so if you change the Identifier, be sure to likewise change the corresponding Utilities SCI Data file name. 
+
+For example, I you change Identifier = "EUR" in "SCI - Euro", then change the corresponding data file name to "Utilities SCI Data EUR"
+
+To change the list of pairs in each index, you can edit the appropriate "Utilities SCI Data" files.  Be sure to adjust the parameter "numPairs=7;" to  be equal to the number of pairs in the list.  You can use any number up to the total number.  If you use a smaller number than the total, only those first ones up to the desired number will be used in the calculation.  For example, if there are 7 pairs in the list, but you use "numPairs=6", then only the first 6 will be used.  (6 is what the original indicators used, regardless of how many total pairs were listed.)  As default, I specified the total number of pairs for each list, so:
+
+Risk = 8
+Canadense = 6
+All other indexes = 7
+
+How to create new index files:
+======================
+
+Also, you can create new indexes by copying/re-naming the SCI and Utilities SCI Data files.
+
+For example, if you want a JPY index,
+
+1. Copy/rename one of the SCI files to: "SCI - JPY.mq4"
+2. Change the Identifier parameter to Identifier = "JPY";
+3. Copy/rename one of the Utilities SCI Data files to "Utilities SCI Data JPY.mq4"
+4. Edit the parameters numPairs, symbols[], and pows[] to the desired values.
+5. After editing the above, compile both files.
+
+maxBars parameter
+===============
+
+In the SCI - Euro (etc) files, the maxBars parameter limits how many bars are calculated and painted.
+
+For example, if maxBars = 1500, only the last 1500 bars will be calculated and painted on initial application of the indicator to the chart.  As time advances, new bars will be added to the base number, so after 10 time-periods, 1510 bars will be on the chart, etc.
+
+To use the entire history of bar data, set maxBars to zero (maxBars=0), or any negative number (maxBars=-1), or a huge number which probably exceeds the actual number of bars in the data history (maxBars=999999999).
+
+Let me know if you have any questions about anything.
+
+Thanks again,
+Dave
+
