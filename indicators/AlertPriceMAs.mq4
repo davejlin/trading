@@ -62,7 +62,7 @@ int OnInit(void)
    return(INIT_SUCCEEDED);
   }
 //+------------------------------------------------------------------+
-//| Bollinger Bands                                                  |
+//| AlertPriceMAs                                                    |
 //+------------------------------------------------------------------+
 int OnCalculate(const int rates_total,
                 const int prev_calculated,
@@ -117,6 +117,5 @@ void CheckAlertTrigger(double thisPrice, double lastPrice, double maPrice, strin
    if((thisPrice>=maPrice && lastPrice<maPrice) || (thisPrice<=maPrice && lastPrice>maPrice))
    {
       Alert(message);
-      Print(message);
    }
 }
