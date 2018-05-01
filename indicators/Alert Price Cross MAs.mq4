@@ -62,7 +62,7 @@ int OnInit(void)
    return(INIT_SUCCEEDED);
   }
 //+------------------------------------------------------------------+
-//| AlertPriceMAs                                                    |
+//| Alert Price Cross MAs                                            |
 //+------------------------------------------------------------------+
 int OnCalculate(const int rates_total,
                 const int prev_calculated,
