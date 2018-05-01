@@ -4,7 +4,7 @@
 //|                                             dave.j.lin@gmail.com |
 //|                                                                  |
 //|                               Written for RoyalMiguel Enterprise |
-//|                                                    April 27, 2018|
+//|                                                   April 27, 2018 |
 //+------------------------------------------------------------------+
 #property copyright   "2018 David Lin"
 #property link        "dave.j.lin@gmail.com"
@@ -16,14 +16,14 @@
 #property indicator_color1 Red
 #property indicator_color2 Blue
 //--- indicator parameters
-input int            MAPeriod1=13;        // Period 1
-input int            MAShift1=0;          // Shift 1
-input ENUM_MA_METHOD MAMethod1=MODE_SMA;  // Method 1
-input ENUM_APPLIED_PRICE MAPrice1=PRICE_CLOSE;  // Price 1
-input int            MAPeriod2=5;         // Period 2
-input int            MAShift2=0;          // Shift 2
-input ENUM_MA_METHOD MAMethod2=MODE_SMA;  // Method 2
-input ENUM_APPLIED_PRICE MAPrice2=PRICE_CLOSE;  // Price 2
+input int                MAPeriod1=13;         // Period 1
+input int                MAShift1=0;           // Shift 1
+input ENUM_MA_METHOD     MAMethod1=MODE_SMA;   // Method 1
+input ENUM_APPLIED_PRICE MAPrice1=PRICE_CLOSE; // Price 1
+input int                MAPeriod2=5;          // Period 2
+input int                MAShift2=0;           // Shift 2
+input ENUM_MA_METHOD     MAMethod2=MODE_SMA;   // Method 2
+input ENUM_APPLIED_PRICE MAPrice2=PRICE_CLOSE; // Price 2
 //--- buffers
 double MABuffer1[];
 double MABuffer2[];
