@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|                                                AlertPriceMAs.mq4 |
+//|                                        Alert Price Cross MAs.mq4 |
 //|                                         Copyright David Lin 2018 |
 //|                                             dave.j.lin@gmail.com |
 //|                                                                  |
@@ -103,9 +103,9 @@ int OnCalculate(const int rates_total,
       MABuffer2[i]=iMA(NULL, 0, MAPeriod2, MAShift2, MAMethod2, MAPrice2, i);
    }
 
-   double thisPrice = iClose(NULL, 0, 0);
-   CheckAlertTrigger(thisPrice, lastPrice, MABuffer1[0], "Price has crossed MA1 ("+MAPeriod1+","+MAShift1+")");
-   CheckAlertTrigger(thisPrice, lastPrice, MABuffer2[0], "Price has crossed MA2 ("+MAPeriod2+","+MAShift2+")");
+   double thisPrice = close[0];
+   CheckAlertTrigger(thisPrice, lastPrice, MABuffer1[0], "Price has crossed MA1 ("+MAPeriod1+","+MAShift1+") on "+ Symbol());
+   CheckAlertTrigger(thisPrice, lastPrice, MABuffer2[0], "Price has crossed MA2 ("+MAPeriod2+","+MAShift2+") on "+ Symbol());
    lastPrice = thisPrice;
 
 //---- OnCalculate done. Return new prev_calculated.
